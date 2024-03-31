@@ -1,1 +1,5 @@
 dataset/
+features/
+.idea/
+__pycache__/
+.pyc

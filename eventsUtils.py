@@ -35,8 +35,11 @@ def loadTrialsEvents(recPath, removeBlinks=True, showEvents=False):
             event.append(float(row[0]))
             event.append(row[1])
 
-            if len(row)>3:
+            # patch to extract info
+            if event[1]=='TRIAL':
                 event.append(row[3])
+            elif event[1]=='OFFSET':
+                event.append(row[2])
 
             events.append(event)
 
@@ -47,12 +50,17 @@ def loadTrialsEvents(recPath, removeBlinks=True, showEvents=False):
     # A correction factor "offset" event can be added manually in case events need to be
     # shifted in time.
     try:
-        offset = extractMultipleEventIDs(events, ["OFFSET"])[0]
-        offset = float(offset[2])
+        offset = extractMultipleEventIDs(events, ["OFFSET"])
+        if len(offset) > 0:
+            offset = float(offset[0][2])
+        else:
+            offset = 0
     except Exception as e:
+        print(offset)
         print(f"offset not applied {e}")
         offset = 0
 
+    "adjust time"
     for event in events:
         event[0] = event[0] + offset - timeRef
 

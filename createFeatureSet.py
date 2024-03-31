@@ -12,7 +12,7 @@ from HermesConstants import HermesConstants
 
 REMOVE_WEAK_EXPRESSIONS = False
 RMS_ACTIVE = True
-INSPECT_RAW_SIGNALS = True
+INSPECT_RAW_SIGNALS = False
 
 if __name__ == '__main__':
 
@@ -24,10 +24,14 @@ if __name__ == '__main__':
 
     # remove all recordings marked with a z (code to remove)
     recordings = [x for x in recordings if 'z' not in x]
-    
+
     # weak recordings are identified with w
     if REMOVE_WEAK_EXPRESSIONS:
         recordings = [x for x in recordings if 'w' not in x]
+
+    # remove spurious file that live in the folder
+    recordings = [x for x in recordings if '.txt' not in x]
+    recordings = [x for x in recordings if '.zip' not in x]
 
     # unique trial id, just in case
     trialCounter = 1
@@ -42,7 +46,7 @@ if __name__ == '__main__':
         # load rawdata
         emgSignals = loadHermesSignals(recPath)
         # load raw events
-        events = loadTrialsEvents(recPath,showEvents=True)
+        events = loadTrialsEvents(recPath,showEvents=False)
 
         if INSPECT_RAW_SIGNALS:
             showHermesBioSignals(emgSignals,channels=[HermesConstants.CHANNEL_NAMES[0]], events=events)
@@ -78,6 +82,9 @@ if __name__ == '__main__':
 
     # compute stats (mean) for reference
     stats = allValues.groupby('Tag', as_index=False)[columnNames].mean()
+
+    if not os.path.exists("features"):
+        os.mkdir("features")
 
     # save file
     allValues.to_csv(os.path.join("features","featuresDf.csv"),index=False)

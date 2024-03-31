@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from HermesConstants import HermesConstants
 
 FILTER_ORDER = 4
-FCs_BANDPASS = np.array([1, 45])
+FCs_BANDPASS = np.array([15, 45])
 
 
 def loadHermesSignals(recPath):
